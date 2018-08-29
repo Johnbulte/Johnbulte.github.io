@@ -1,0 +1,171 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>常也 - 像初雪一样自由洒落</title>
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,">
+
+    <meta name="author" content="Fechin">
+    <link rel="alternative" href="atom.xml" title="常也" type="application/atom+xml">
+    <link rel="icon" href="/img/favicon.png">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-8691406134231910",
+        enable_page_level_ads: true
+      });
+    </script>
+
+</head>
+
+<body class="loading">
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">JavaScript 给 DOM 元素相同事件绑定多函数</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">JavaScript 给 DOM 元素相同事件绑定多函数</h1>
+        <div class="stuff">
+            <span>八月 30, 2013</span>
+
+
+        </div>
+        <div class="content markdown">
+            <h3 id="给-DOM-元素的同一事件绑定多个处理函数"><a href="#给-DOM-元素的同一事件绑定多个处理函数" class="headerlink" title="给 DOM 元素的同一事件绑定多个处理函数"></a>给 DOM 元素的同一事件绑定多个处理函数</h3><p>今天，同事问“一个 DOM 元素的同一事件如何绑定多个方法”，为什么这么问，因为在 javascript 中有一个规律，如果某元素的某事件多次赋值，那么只有最后一次赋值生效，如下代码将只弹出”second.”。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">document.body.onclick=function()&#123;</div><div class="line">	alert(&quot;first.&quot;);</div><div class="line">&#125;;</div><div class="line">document.body.onclick=function()&#123;</div><div class="line">	alert(&quot;second.&quot;);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>说起这个问题，我首先想到的是 jQuery, 它的 <code>bind(type,[data],fn)</code> 方法可以实现同一事件函数叠加的效果，那么， js 如何实现呢？如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 给 DOM 元素的同一事件绑定多个方法</div><div class="line"> *</div><div class="line"> * @param &#123;Object&#125; obj	DOM 对象</div><div class="line"> * @param &#123;Object&#125; type 事件类型</div><div class="line"> * @param &#123;Object&#125; fn	处理函数</div><div class="line"> */</div><div class="line">function addEventFns(_obj,_type,_fn)&#123;</div><div class="line">	var oldEvent = _obj[_type];</div><div class="line">	if(typeof _obj[_type] == &quot;function&quot;)&#123;</div><div class="line">		_obj[_type] = function()&#123;</div><div class="line">			oldEvent();</div><div class="line">			_fn();</div><div class="line">		&#125;</div><div class="line">	&#125;else&#123;</div><div class="line">		_obj[_type] = _fn;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在 Dom 节点加载完毕之后这样调用 <code>addEventFns(_obj,_type,_fn)</code></p>
+<ul>
+<li>_obj: 需要添加事件的 DOM 对象，比如：<code>document.getElementById(“container”)</code> 或 <code>document.body</code>;</li>
+<li>_type: 事件类型的字符串，比如：<code>onclick</code> 或 <code>onmouseover</code>;</li>
+<li>_fn: 绑定到 DOM 元素的事件上面的处理函数。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">addEventFns(obj,&quot;onclick&quot;,function()&#123;</div><div class="line">		alert(&quot;Fired the event.&quot;);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="项目中用到的一些工具函数"><a href="#项目中用到的一些工具函数" class="headerlink" title="项目中用到的一些工具函数"></a>项目中用到的一些工具函数</h3><p>公司 xx 项目就失业子系统变更 coding 告一段落，收获颇多，主要涉及校验，和业务的理解，可谓是循序渐进，环环相扣。coding 过程走火入魔算不上，但出入分明。总结几个常用 javascript 校验，菜鸟级别，仅供参考！<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line"> * 获取两个时间相差月数</div><div class="line"> *</div><div class="line"> * @param &#123;Object&#125; start 开始时间 (yyyy-MM)</div><div class="line"> * @param &#123;Object&#125; end   结束时间 (yyyy-MM)</div><div class="line"> * @return &#123;TypeName&#125;</div><div class="line"> */</div><div class="line">function getDiffOfMonth(start,end)&#123;</div><div class="line">	var diff;</div><div class="line">	if(start==&quot;&quot;||end==&quot;&quot;)&#123;</div><div class="line">		diff = &quot;&quot;;</div><div class="line">	&#125;</div><div class="line">	var startArr = start.split(&apos;-&apos;);</div><div class="line">	var endArr = end.split(&apos;-&apos;);</div><div class="line">	if(startArr[0]==endArr[0])&#123;</div><div class="line">		diff = endArr[1]-startArr[1];</div><div class="line">	&#125;else&#123;</div><div class="line">		diff = (endArr[0]-startArr[0])*12+(endArr[1]-startArr[1]);</div><div class="line">	&#125;</div><div class="line">	return Math.abs(diff)+1;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/**</div><div class="line"> * 根据月份区间获取所有月份集合</div><div class="line"> *</div><div class="line"> * @param &#123;Object&#125; start 开始时间 (yyyy-MM)</div><div class="line"> * @param &#123;Object&#125; end   结束时间 (yyyy-MM)</div><div class="line"> * @return &#123;TypeName&#125;</div><div class="line"> */</div><div class="line">function getAllMonth(start, end) &#123;</div><div class="line">	var months = new Array(start);</div><div class="line">	var month = &quot;&quot;;</div><div class="line">	var length = getDiffOfMonth(start, end);</div><div class="line">	var start = start.split(&apos;-&apos;);</div><div class="line">	var end = end.split(&apos;-&apos;);</div><div class="line">	var temp;</div><div class="line">	for ( var i = 0; i &lt; length - 1; i++) &#123;</div><div class="line">		temp = new Date(start[0], parseInt(start[1]) + i);</div><div class="line">		month = new String(temp.getMonth() + 1).length == 1 ? &quot;0&quot;</div><div class="line">				+ (temp.getMonth() + 1) : (temp.getMonth() + 1);</div><div class="line">		months.push(temp.getFullYear() + &quot;-&quot; + month);</div><div class="line">	&#125;</div><div class="line">	return months;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/**</div><div class="line"> * 获取两个时间相差天数</div><div class="line"> *</div><div class="line"> * @param &#123;Object&#125; start 开始时间 (yyyy-MM-dd)</div><div class="line"> * @param &#123;Object&#125; end   结束时间 (yyyy-MM-dd)</div><div class="line"> * @return &#123;TypeName&#125;</div><div class="line"> */</div><div class="line">function getDiffOfDay(start,end)&#123;</div><div class="line">	var diff;</div><div class="line">	if(start==&quot;&quot;||end==&quot;&quot;)&#123;</div><div class="line">		diff = &quot;&quot;;</div><div class="line">	&#125;</div><div class="line">	diff = Math.abs(new Date(start)-new Date(end));</div><div class="line">	return diff/(1000*3600*24)</div><div class="line">&#125;</div><div class="line"></div><div class="line">/**</div><div class="line"> * 一次性领取失业保险金明细记录唯一性校验</div><div class="line"> * 判重思路：循环数组各元素，如果在该数组出现两次则重复</div><div class="line"> * 关键方法：jQuery.inArray(value,array,[fromIndex])</div><div class="line"> *</div><div class="line"> * @return &#123;TypeName&#125;</div><div class="line"> */</div><div class="line">function ycxmxUnique() &#123;</div><div class="line">	var flag = true;</div><div class="line">	var length = $(&quot;[name=&apos;lx&apos;]&quot;).last().attr(&quot;id&quot;); // 最后一条明细的 id</div><div class="line">	var start = &quot;&quot;;</div><div class="line">	var end = &quot;&quot;;</div><div class="line">	var tempArr = new Array();</div><div class="line"></div><div class="line">	// 封装数组</div><div class="line">	for ( var i = 1; i &lt;= length; i++) &#123;</div><div class="line">		if (typeof ($(&quot;[name=&apos;ksny&apos;][id=&quot; + i + &quot;]&quot;).val()) == &quot;undefined&quot;) &#123;</div><div class="line">			continue;</div><div class="line">		&#125;</div><div class="line">		start = $(&quot;[name=&apos;jsny&apos;][id=&quot; + i + &quot;]&quot;).val();</div><div class="line">		end = $(&quot;[name=&apos;ksny&apos;][id=&quot; + i + &quot;]&quot;).val();</div><div class="line">		tempArr = tempArr.concat(getAllMonth(start, end));</div><div class="line">	&#125;</div><div class="line">	tempArr.sort();</div><div class="line">	// 判断重复</div><div class="line">	for ( var i = 0; i &lt; tempArr.length; i++) &#123;</div><div class="line">		if (tempArr[i].length == 7</div><div class="line">				&amp;&amp; jQuery.inArray(tempArr[i], tempArr, i + 1) &gt; -1) &#123;</div><div class="line">			alert(&quot;一次性返回年月有重复，请重新输入！&quot;);</div><div class="line">			flag = false;</div><div class="line">			break;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	return flag;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="http://link.hhtjim.com/163/27646205.mp3">
+            </audio>
+
+        </div>
+
+    <div id='gitalk-container' class="comment link"
+        data-ae='false'
+        data-ci='a396afe529734b15300f'
+        data-cs='0ae7c1790f9a5cbc2b7339c12a82d58fe58f9567'
+        data-r='fechin.github.io'
+        data-o='Fechin'
+        data-a='Fechin'
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe.
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides.
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-69833742-2', 'auto');
+  ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+
+
+</html>
